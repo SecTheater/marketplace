@@ -31,7 +31,7 @@ class MarketplaceServiceProvider extends ServiceProvider
     {
         $publishablePath =  __DIR__.'/../Publishables';
         $this->publishes([
-            $publishablePath.'/config/market.php' => config_path('market.php'),
+            $publishablePath.'/config' => config_path('/'),
             $publishablePath.'/migrations'        => database_path('migrations'),
             $publishablePath.'/seeders'           => database_path('seeds'),
         ], 'marketplace');

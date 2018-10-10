@@ -2,7 +2,6 @@
 
 return [
     'review' => true,
-    'cart_expiration' => 10,
     'tax' => [
         'enabled' => true,
         'percentage' => 10

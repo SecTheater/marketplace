@@ -38,6 +38,6 @@ class InstallCommand extends Command
      */
     public function handle()
     {
-        $this->call('vendor:publish', ['--provider' => MarketplaceServiceProvider::class]);
+        $this->call('vendor:publish', ['--tag' => 'marketplace']);
     }
 }

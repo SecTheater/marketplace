@@ -32,16 +32,16 @@ class EloquentProduct extends Eloquent implements ProductInterface {
 		return $this->belongsTo($this->userModel, 'user_id', 'id');
 	}
 	public function shouldBeReviewed() {
-		return !!config('product.review');
+		return !!config('market.product.review');
 	}
 	
 	public function discounts() {
 		if (!$this->sale) {
 			$this->sale = $this->categories->reduce(function($carry, $category){
-			return $carry + $category->getDiscount();
-		}) + $this->types->reduce(function($carry , $type){
-			return $carry + $type->getDiscount();
-		}) + ($this->sales()->latest()->first()->percentage ?? 0);
+				return $carry + $category->getDiscount();
+			}) + $this->types->reduce(function($carry , $type){
+				return $carry + $type->getDiscount();
+			}) + ($this->sales()->latest()->first()->percentage ?? 0);
 		}
 		return $this->sale;
 	}

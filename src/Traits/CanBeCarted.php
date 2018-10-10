@@ -59,8 +59,8 @@ trait CanBeCarted {
 			$this->subtotal = $coupons ? $this->subtotalAfterCoupon($coupons) : $this->subtotal();
 		}
 
-		if (config('cart.tax.enabled') && is_int(config('cart.tax.percentage')) && class_basename($this->model) == 'Cart') {
-			return $this->subtotal * (config('cart.tax.percentage')) / 100;
+		if (config('market.cart.tax.enabled') && is_int(config('market.cart.tax.percentage')) && class_basename($this->model) == 'Cart') {
+			return $this->subtotal * (config('market.cart.tax.percentage')) / 100;
 		}
 		return $this->subtotal;
 	}

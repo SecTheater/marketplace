@@ -30,7 +30,7 @@ class ProductRepository extends Repository implements ProductInterface {
 	}
 
 	public function approve($id) {
-		throw_unless(config('product.review'), PropertyIsNotEnabledExpcetion::class);
+		throw_unless(config('market.product.review'), PropertyIsNotEnabledExpcetion::class);
 		return !!$this->model->findOrFail($id)->update(['reviewed' => true, 'reviewed_at' => date('Y-m-d H:i:s'), 'reviewed_by' => auth()->id()]);
 	}
 	public function fetchByCategories($types) {

@@ -19,10 +19,6 @@ class EloquentUser extends Eloquent implements UserInterface,
 
     protected $table = 'users';
 
-	public $observers = [
-		'username' => 'startsWithUpper',
-	];
-
 	public function wishlist() {
 		return $this->belongsToMany($this->wishlistModel, 'user_wishlist','user_id','wishlist_id');
 	}
