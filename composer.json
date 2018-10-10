@@ -22,7 +22,8 @@
             "providers": [
                 "SecTheater\\Marketplace\\Providers\\MarketplaceServiceProvider",
                 "SecTheater\\Marketplace\\Providers\\EloquentEventServiceProvider",
-                "SecTheater\\Marketplace\\Providers\\EloquentServiceProvider"
+                "SecTheater\\Marketplace\\Providers\\EloquentServiceProvider",
+                "SecTheater\\Marketplace\\Providers\\AuthyServiceProvider"
 
             ],
             "aliases": {
