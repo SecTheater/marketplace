@@ -1,0 +1,43 @@
+{
+    "name": "sectheater/market-fluent",
+    "description": "The Fluent Laravel E-commerce system",
+    "keywords" : ["Laravel E-commerce","Laravel Shopping Cart"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mohammed Osama",
+            "email": "mohammedosama@sectheater.org"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+         "psr-4": {
+            "SecTheater\\Marketplace\\" : "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SecTheater\\Marketplace\\Providers\\MarketplaceServiceProvider",
+                "SecTheater\\Marketplace\\Providers\\EloquentEventServiceProvider",
+                "SecTheater\\Marketplace\\Providers\\EloquentServiceProvider"
+
+            ],
+            "aliases": {
+                "Cart": "SecTheater\\Marketplace\\Facades\\CartRepository",
+                "Category": "SecTheater\\Marketplace\\Facades\\CategoryRepository",
+                "Coupon": "SecTheater\\Marketplace\\Facades\\CouponRepository",
+                "Product": "SecTheater\\Marketplace\\Facades\\ProductRepository",
+                "ProductVariation": "SecTheater\\Marketplace\\Facades\\ProductVariationRepository",
+                "ProductType": "SecTheater\\Marketplace\\Facades\\ProductVariationTypeRepository",
+                "User": "SecTheater\\Marketplace\\Facades\\UserRepository",
+                "Wishlist": "SecTheater\\Marketplace\\Facades\\WishlistRepository"
+            }
+        }
+    }
+
+
+
+}
