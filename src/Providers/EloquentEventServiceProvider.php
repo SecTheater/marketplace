@@ -15,8 +15,10 @@ class EloquentEventServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function boot() {
-		Product::observe(ProductObserver::class);
-		Coupon::observe(CouponObserver::class);
+		if (config('market.observers.register')) {
+			Product::observe(ProductObserver::class);
+			Coupon::observe(CouponObserver::class);
+		}
 	}
 
 	/**

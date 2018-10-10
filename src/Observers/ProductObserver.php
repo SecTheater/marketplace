@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Observers;
+namespace SecTheater\Marketplace\Observers;
 
 use SecTheater\Marketplace\Models\EloquentProduct;
 

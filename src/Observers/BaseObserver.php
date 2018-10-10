@@ -1,5 +1,5 @@
 <?php
-namespace App\Observers;
+namespace SecTheater\Marketplace\Observers;
 use Illuminate\Database\Eloquent\Model;
 class BaseObserver
 {
