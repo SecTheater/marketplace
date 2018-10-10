@@ -29,7 +29,7 @@ class MarketplaceServiceProvider extends ServiceProvider
     }
     public function registerPublishables()
     {
-        $publishablePath =  __DIR__.'/../publishables';
+        $publishablePath =  __DIR__.'/../Publishables';
         $this->publishes([
             $publishablePath.'/config/market.php' => config_path('market.php'),
             $publishablePath.'/migrations'        => database_path('migrations'),
