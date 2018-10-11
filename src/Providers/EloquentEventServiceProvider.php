@@ -2,11 +2,7 @@
 
 namespace SecTheater\Marketplace\Providers;
 
-use SecTheater\Marketplace\Observers\CouponObserver;
-use SecTheater\Marketplace\ProductObserver;
 use Illuminate\Support\ServiceProvider;
-use SecTheater\Marketplace\Models\EloquentCoupon;
-use SecTheater\Marketplace\Models\EloquentProduct;
 
 class EloquentEventServiceProvider extends ServiceProvider {
 	/**
@@ -16,8 +12,9 @@ class EloquentEventServiceProvider extends ServiceProvider {
 	 */
 	public function boot() {
 		if (config('market.observers.register')) {
-			EloquentProduct::observe(ProductObserver::class);
-			EloquentCoupon::observe(CouponObserver::class);
+			\SecTheater\Marketplace\Models\EloquentProduct::observe(\SecTheater\Marketplace\Observers\ProductObserver::class);
+			\SecTheater\Marketplace\Models\EloquentCoupon::observe(\SecTheater\Marketplace\Observers\CouponObserver::class);
+
 		}
 	}
 
