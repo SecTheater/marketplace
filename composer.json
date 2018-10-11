@@ -34,7 +34,8 @@
                 "ProductVariation": "SecTheater\\Marketplace\\Facades\\ProductVariationRepository",
                 "ProductType": "SecTheater\\Marketplace\\Facades\\ProductVariationTypeRepository",
                 "User": "SecTheater\\Marketplace\\Facades\\UserRepository",
-                "Wishlist": "SecTheater\\Marketplace\\Facades\\WishlistRepository"
+                "Wishlist": "SecTheater\\Marketplace\\Facades\\WishlistRepository",
+                "Sale" : "SecTheater\\Marketplace\\Facades\\SaleRepository"
             }
         }
     }
