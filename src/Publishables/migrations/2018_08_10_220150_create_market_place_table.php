@@ -20,6 +20,8 @@ class CreateMarketFluentTable extends Migration
             $table->string('password');
             $table->string('location');
             $table->text('permissions')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
+
             $table->string('remember_token')->nullable();
             $table->timestamps();
         });
