@@ -1,4 +1,6 @@
 <?php
+
+use SecTheater\Marketplace\Exceptions\UndefinedMethodException;
 if (!function_exists('package_path')) {
     function package_path($path = null)
     {
@@ -9,6 +11,12 @@ if (!function_exists('model_exists')) {
     function model_exists($name)
     {
         return File::exists(str_replace('\\', DIRECTORY_SEPARATOR, base_path(lcfirst(ltrim(config('market.models.namespace'), '\\'))).ucfirst($name).'.php'));
+    }
+}
+if (!function_exists('repository_exists')) {
+    function repository_exists($name)
+    {
+        return File::exists(package_path('Repositories/' . $name . 'Repository.php'));
     }
 }
 if (!function_exists('package_version')) {
@@ -30,13 +38,14 @@ if (!function_exists('repository')) {
         $models = config('market.models.package');
         $name = str_replace('Repository', '', $name);
         $model = model($name);
-        if (!count(config('market.repositories.user')) || !in_array($name, config('market.repositories.user'))) {
-            if (!array_key_exists($name, $models)) {
-                throw new \SecTheater\Marketplace\Helpers\HelperException("Repository $name Does not exist", 500);
-            }
-            $repository = '\SecTheater\market\\'.ucfirst($name).'\\'.ucfirst($name).'Repository';
-        } else {
-            $repository = '\\'.trim(config('market.repositories.namespace'), '\\').'\\'.ucfirst($name).'Repository';
+        if (!in_array(strtolower($name) , config('market.repositories.user'))) {
+            $repository = '\\SecTheater\\Marketplace\\Repositories\\' . ucfirst($name) . 'Repository';
+        }
+        if (in_array(strtolower($name) , config('market.repositories.user'))) {
+            $repository = config('market.repositories.user')[strtolower($name)];
+        }
+        if (!isset($repository)) {
+            throw new \Exception('Repository does not exist');
         }
         return new $repository($model);
     }
@@ -45,7 +54,7 @@ if (!function_exists('market_model_exists')) {
     function market_model_exists($name)
     {   
         if (str_contains($name, 'Eloquent')) {
-            return File::exists(__DIR__.'/../Models'.ucfirst($name).'.php');
+            return File::exists(__DIR__.'/../Models/'.ucfirst($name).'.php');
         }
         return File::exists(__DIR__.'/../Models/Eloquent'.ucfirst($name).'.php');
     }
@@ -64,10 +73,10 @@ if (!function_exists('model')) {
                 $model = config('market.models.package')[lcfirst($name)];
             }
             return new $model($attributes);
-        } elseif (File::exists(__DIR__.'/../'.$name.'/'.'Eloquent'.$name.'.php')) {
-            $model = '\\SecTheater\\Marketplace\\'.$name.'\\'.'Eloquent'.$name;
+        } elseif (File::exists(__DIR__.'/../Models/Eloquent'.$name.'.php')) {
+            $model = '\\SecTheater\\Marketplace\\Models\\Eloquent'. $name;
             return new $model($attributes);
         }
-        throw new \SecTheater\market\Helpers\HelperException("Model $name Does not exist", 500);
+        throw new UndefinedMethodException("Model $name Does not exist", 500);
     }
 }
