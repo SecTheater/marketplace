@@ -9,6 +9,7 @@ use SecTheater\Marketplace\Models\EloquentCoupon as Coupon;
 use SecTheater\Marketplace\Models\EloquentProduct as Product;
 use SecTheater\Marketplace\Models\EloquentProductVariation as ProductVariation;
 use SecTheater\Marketplace\Models\EloquentProductVariationType as ProductVariationType;
+use SecTheater\Marketplace\Models\EloquentRole;
 use SecTheater\Marketplace\Models\EloquentSale as Sale;
 use SecTheater\Marketplace\Models\EloquentUser as User;
 use SecTheater\Marketplace\Models\EloquentWishlist as Wishlist;
@@ -19,6 +20,7 @@ use SecTheater\Marketplace\Repositories\ProductRepository;
 use SecTheater\Marketplace\Repositories\ProductVariationRepository;
 use SecTheater\Marketplace\Repositories\ProductVariationTypeRepository;
 use SecTheater\Marketplace\Repositories\SaleRepository;
+use SecTheater\Marketplace\Repositories\RoleRepository;
 use SecTheater\Marketplace\Repositories\UserRepository;
 use SecTheater\Marketplace\Repositories\WishlistRepository;
 
@@ -64,6 +66,9 @@ class EloquentServiceProvider extends ServiceProvider {
 
 		$this->app->singleton('SaleRepository', function () {
 			return new SaleRepository(new Sale);
+		});
+		$this->app->singleton('RoleRepository', function () {
+			return new RoleRepository(new EloquentRole);
 		});
 
 		$this->app->singleton('ProductRepository', function () {
