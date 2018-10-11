@@ -1,5 +1,5 @@
 {
-    "name": "sectheater/market-fluent",
+    "name": "sectheater/marketplace",
     "description": "The Fluent Laravel E-commerce system",
     "keywords" : ["Laravel E-commerce","Laravel Shopping Cart"],
     "type": "library",

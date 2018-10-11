@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Role;
-class RolesSeeder extends Seeder
+use SecTheater\Marketplace\Models\EloquentRole;
+class RolesTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,7 +11,7 @@ class RolesSeeder extends Seeder
      */
     public function run()
     {
-        $admin = Role::create([
+        $admin = EloquentRole::create([
             'slug'        => 'admin',
             'name'        => 'Administrator',
             'permissions' => [
@@ -27,7 +27,7 @@ class RolesSeeder extends Seeder
                 'delete-product' => true
             ],
         ]);
-        $moderator = Role::create([
+        $moderator = EloquentRole::create([
             'slug'        => 'moderator',
             'name'        => 'Moderator',
             'permissions' => [
@@ -44,7 +44,7 @@ class RolesSeeder extends Seeder
 
             ],
         ]);
-        $user = Role::create([
+        $user = EloquentRole::create([
             'name'        => 'Normal User',
             'slug'        => 'user',
             'permissions' => [

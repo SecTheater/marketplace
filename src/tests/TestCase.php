@@ -13,11 +13,12 @@ abstract class TestCase extends BaseTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->seed('RolesSeeder');
+        $this->seed('RolesTableSeeder');
         $this->user = factory(User::class)->create();
         $this->user->roles()->attach(EloquentRole::first());
         $this->actingAs($this->user);
     }
+    // Heveans only know why factory doesn't work while this does. :/
     protected function createSale(array $attributes)
     {
         $sale = new \SecTheater\Marketplace\Models\EloquentSale;

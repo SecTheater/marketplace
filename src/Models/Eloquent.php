@@ -8,7 +8,7 @@ class Eloquent extends Model
     {
         if (!property_exists(static::class, $name) && str_contains($name, 'Model')) {
             $model = str_replace('Model', '', $name);
-            if (model_exists($model)) {
+            if (model_exists($model) && app()->environment() != 'testing') {
                 $key = 'market.models.user.'.$model;
                 $value = config('market.models.namespace').ucfirst($model);
                 config([$key => $value]);
