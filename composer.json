@@ -35,7 +35,8 @@
                 "ProductType": "SecTheater\\Marketplace\\Facades\\ProductVariationTypeRepository",
                 "User": "SecTheater\\Marketplace\\Facades\\UserRepository",
                 "Wishlist": "SecTheater\\Marketplace\\Facades\\WishlistRepository",
-                "Sale" : "SecTheater\\Marketplace\\Facades\\SaleRepository"
+                "Sale" : "SecTheater\\Marketplace\\Facades\\SaleRepository",
+                "Role" : "SecTheater\\Marketplace\\Facades\\RoleRepository"
             }
         }
     }
