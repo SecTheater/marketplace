@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies;
+namespace SecTheater\Marketplace\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use SecTheater\Marketplace\Models\EloquentUser as User;
