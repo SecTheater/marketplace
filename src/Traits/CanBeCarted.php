@@ -32,7 +32,6 @@ trait CanBeCarted {
 		$cart = auth()->user()->{$this->getModelName}()->where(['product_id' => $type->product_id , 'product_variation_type_id' => $type->id ])->firstOrFail();
 		$cart->increment('quantity', $quantity);
 		return $cart;
-
 	}
 	public function remove($id) {
 		$cart = $this->item($id);
@@ -67,7 +66,7 @@ trait CanBeCarted {
 	public function items() {
 		return auth()->user()->{$this->getModelName};
 	}
-	public function item($id = null, $attributes = null , $connector = 'or') {
+	public function item(int $id = null, array $attributes = null , $connector = 'or') {
 		if (!$id && !$attributes) {
 			return $this->items();
 		}
