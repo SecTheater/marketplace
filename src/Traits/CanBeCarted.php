@@ -29,10 +29,10 @@ trait CanBeCarted {
 			$attributes = ['product_id' => $type->product_id, 'quantity' => $quantity, 'product_variation_type_id' => $type->id];
 			return $this->create($attributes);
 		}
-		$cart = auth()->user()->{$this->getModelName}()->whereProductId($type->product_id);
-		throw_unless($cart->first(), ProductDoesNotExist::class);
+		$cart = auth()->user()->{$this->getModelName}()->where(['product_id' => $type->product_id , 'product_variation_type_id' => $type->id ])->firstOrFail();
 		$cart->increment('quantity', $quantity);
-		return auth()->user()->{$this->getModelName}()->whereProductId($type->product_id)->first();
+		return $cart;
+
 	}
 	public function remove($id) {
 		$cart = $this->item($id);
