@@ -30,7 +30,6 @@ class WishlistRepositoryTest extends TestCase {
 		$this->assertInstanceOf(Collection::class, $this->wishlistInstance->item($this->wishlist->id, ['color' => 'blue', 'size' => 'L'])->product->variations);
 		$this->assertInstanceOf(Collection::class, $this->wishlistInstance->item());
 		$this->assertInstanceOf(Collection::class, $this->wishlistInstance->item(null , ['color' => 'blue', 'size' => 'L']));
-
 		$this->expectException(ProductAttributesDoesNotMatchException::class);
 		$this->wishlistInstance->item($this->wishlist->id, ['color' => 'random-color']);
 
@@ -56,7 +55,7 @@ class WishlistRepositoryTest extends TestCase {
 	}
 	/** @test */
 	public function it_check_stock_equals_after_removal() {
-		$stock = $this->wishlistInstance->stock($this->wishlist) + $this->wishlistInstance->item($this->wishlist->id)->quantity;
+		$stock = $this->wishlist->type->stock + $this->wishlistInstance->stock($this->wishlist);
 		$this->assertTrue($this->wishlistInstance->remove($this->wishlist->id));
 		$this->assertEquals($stock, $this->typeRepo->stock($this->wishlist->product_variation_type_id));
 
@@ -114,15 +113,19 @@ class WishlistRepositoryTest extends TestCase {
 	}
 	/** @test */
 	public function update_product_stock_after_updating_wishlist_quantity() {
-		$stock = $this->wishlistInstance->stock($this->wishlist) - 2;
+		$stock = $this->wishlist->type->stock - 2;
 		$this->assertInstanceOf(Wishlist::class, $this->wishlistInstance->renew($this->wishlist, ['quantity' => 2]));
-		$this->assertEquals($stock, $this->wishlistInstance->stock($this->wishlist));
+		$this->assertEquals(2, $this->wishlistInstance->stock($this->wishlist));
+		$this->assertEquals($stock , $this->wishlist->type->stock);
 	}
 	/** @test */
 	public function it_pushes_the_wish_to_cart() {
-		$stock = $this->wishlistInstance->first()->stock;
+		$stock = $this->wishlistInstance->first()->quantity;
+		$typeStock = $this->wishlistInstance->first()->type->stock;
+		$actualStock = $typeStock - $stock;
 		$cart = $this->wishlistInstance->pushWishToCart($this->wishlistInstance->first());
 		$this->assertInstanceOf(Cart::class, $cart);
-		$this->assertEquals($stock, $cart->stock);
+		$this->assertEquals($cart->type->stock , $actualStock);
+		$this->assertEquals($stock, $cart->quantity);
 	}
 }
