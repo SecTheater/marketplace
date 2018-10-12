@@ -8,8 +8,7 @@ use SecTheater\Marketplace\Exceptions\PropertyIsNotEnabledExpcetion;
 use SecTheater\Marketplace\Models\EloquentProduct;
 
 class ProductRepository extends Repository implements ProductInterface {
-	protected $model, $typeRepo, $variationRepo, $category, $baseQuery;
-
+	protected $model, $typeRepo, $variationRepo, $category, $baseQuery, $criteria = [];
 	public function __construct(EloquentProduct $model) {
 		$this->model = $model;
 		$this->category = app('CategoryRepository');
@@ -47,10 +46,13 @@ class ProductRepository extends Repository implements ProductInterface {
 		return $this->fetchByLocation($locations)->withCount('carts')->orderBy('carts_count', 'desc');
 	}
 	protected function availableCriteria() {
-		return [
+		return array_merge( [
 			'locations' => 'fetchTrendyByLocation',
 			'categories' => 'fetchByCategories',
-		];
+		], $this->criteria);
+	}
+	public function addCriterion($name , $callback){
+		$this->criteria[$name] =  $callback;
 	}
 	public function fetchByVariations($criteria) {
 		if (array_key_exists('variations', $criteria)) {
@@ -59,6 +61,10 @@ class ProductRepository extends Repository implements ProductInterface {
 		}
 		foreach ($criteria as $key => $criterion) {
 			if (array_key_exists($key, $this->availableCriteria())) {
+				if (is_callable($this->availableCriteria()[$key])) {
+					$this->baseQuery = call_user_func_array($this->availableCriteria()[$key], $criterion);
+					continue;
+				}
 				$this->baseQuery = call_user_func_array([$this, $this->availableCriteria()[$key]], (array) $criterion);
 
 			}
