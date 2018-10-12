@@ -67,7 +67,17 @@ trait CanBeCarted {
 	public function items() {
 		return auth()->user()->{$this->getModelName};
 	}
-	public function item($id, $attributes = null) {
+	public function item($id = null, $attributes = null , $connector = 'or') {
+		if (!$id && !$attributes) {
+			return $this->items();
+		}
+		if (!$id && $attributes) {
+			return auth()->user()->{$this->getModelName}()->whereHas('product.variations', function($query) use($attributes , $connector){
+				array_walk($attributes, function($value,$key) use($query , $connector){
+					$query->where('details->' . $key , '=', $value , $connector);
+				});
+			})->get();
+		}
 		$cart = auth()->user()->{$this->getModelName}()->findOrFail($id);
 		if ($attributes) {
 			throw_unless($this->variationRepo->contains($cart->product_variation_type_id, $attributes), ProductAttributesDoesNotMatchException::class);
