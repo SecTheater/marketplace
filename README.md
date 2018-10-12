@@ -1,5 +1,5 @@
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/sectheater/laravel-jarvis.svg?style=flat-square)](https://packagist.org/packages/sectheater/laravel-jarvis)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/sectheater/marketplace.svg?style=flat-square)](https://packagist.org/packages/sectheater/marketplace)
 
 <!-- [![Total Downloads](https://img.shields.io/packagist/dt/sectheater/laravel-jarvis.svg?style=flat-square)](https://packagist.org/packages/sectheater/laravel-jarvis) -->
 
@@ -117,13 +117,55 @@ Suprisingly every single method you can use for a cart, you can use for a wishli
 Cart::item(1); // get the item with id of 1
 
 Cart::item(1,  ['color' => 'blue', 'size' => 'L']); // get the item with the id of 1 and should have these attributes.
+
+Cart::item(null, ['color' => 'blue','size' => 'L']); // get the current authenticated user's cart which has these attributes assuming that these attributes identical to the database record.
+
+Cart::item(null, ['color' => 'blue','size' => 'L'] , 'or');  // get the current authenticated user's cart which has any of these attributes.
+
 ```
 
 ##### 4.4 Generate Coupons.
+```php
+Coupon::generate([
+  'user_id' => auth()->id(),
+  'active' => true,
+  'percentage' => 10.5,
+  'expires_at' => Carbon::now()->addWeeks(3)->format('Y-m-d H:i:s')
+]);
+```
+
+##### 4.5 Validate Coupons.
+
+```php
+$coupon = Coupon::first(); // valid one
+Coupon::validate($coupon); // returns true
+
+```
+##### 4.6 Deactivate Coupons.
+```php
+$coupon = Coupon::first(); 
+Coupon::deactivate($coupon->id);
+```
+##### 4.7 Purchas Coupons.
+```php
+$coupon = Coupon::first();
+Coupon::purchase($coupon); // Purchase the coupon for the current authenticated user.
+Coupon::purchase($coupon, $anotherUser); // Purchase the coupon for the passed user.
+
+```
+
+##### 4.7 Purchased Coupons.
+- It releases the invalid purchased coupons automatically.
+```php
+Coupon::purchased(); // returns the only valid purchased coupons.
+```
+##### 4.8 Apply  Specific Coupons.
+- Assuming the user has a couple of coupons, he can designate which of them that can be applied on a specific product.
+
+```php
+Coupon::appliedCoupons($coupons); // returns a query builder.
+```
 
 
-##### 4.5 Deactivate Coupons.
-
-##### 4.6 Purchased Coupons.
 
 For more, you can view the docs.
