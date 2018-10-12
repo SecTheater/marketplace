@@ -168,4 +168,4 @@ Coupon::appliedCoupons($coupons); // returns a query builder.
 
 
 
-For more, you can view the docs.
+For more, you can view the [docs](https://github.com/SecTheater/marketplace/wiki).
