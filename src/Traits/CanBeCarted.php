@@ -112,7 +112,7 @@ trait CanBeCarted {
 		if (!$cart instanceof $base) {
 			$cart = $this->findOrFail($cart);
 		}
-		return $cart->type->stock;
+		return $cart->quantity;
 	}
 
 	public function __set($key, $value) {
