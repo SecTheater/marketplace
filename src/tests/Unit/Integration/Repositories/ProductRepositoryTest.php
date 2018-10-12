@@ -136,4 +136,15 @@ class ProductRepositoryTest extends TestCase {
 		$type = $this->category->type;
 		$this->assertCount(0, $this->productInstance->fetchByVariations(['locations' => 'Egypt', 'variations' => ['size' => 'XL', 'color' => 'red'], 'categories' => $type]));
 	}
+	/** @test */
+	public function it_filters_by_custom_variations()
+	{
+		$this->productInstance->addCriterion('fetchReviewed' , function($reviewed){
+			return $this->productInstance->whereReviewed($reviewed);
+		});
+		$this->productInstance->first()->fill(['reviewed' => false])->save();
+		$this->assertEquals(5,$this->productInstance->fetchByLocation('Egypt')->whereReviewed(true)->count());
+		$this->assertEquals(5,$this->productInstance->fetchByVariations(['fetchReviewed' => ['reviewed' => true]])->count());
+		$this->assertEquals(5,$this->productInstance->fetchByVariations(['locations' => 'Egypt','fetchReviewed' => ['reviewed' => true]])->count());
+	}
 }
