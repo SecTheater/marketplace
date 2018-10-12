@@ -28,6 +28,8 @@ class WishlistRepositoryTest extends TestCase {
 		$this->assertInstanceOf(Collection::class, $this->wishlistInstance->item($this->wishlist->id, $this->wishlist->product->variations()->first()->details)->product->variations);
 		// partially existing.
 		$this->assertInstanceOf(Collection::class, $this->wishlistInstance->item($this->wishlist->id, ['color' => 'blue', 'size' => 'L'])->product->variations);
+		$this->assertInstanceOf(Collection::class, $this->wishlistInstance->item());
+		$this->assertInstanceOf(Collection::class, $this->wishlistInstance->item(null , ['color' => 'blue', 'size' => 'L']));
 
 		$this->expectException(ProductAttributesDoesNotMatchException::class);
 		$this->wishlistInstance->item($this->wishlist->id, ['color' => 'random-color']);
