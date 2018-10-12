@@ -113,7 +113,7 @@ class WishlistRepositoryTest extends TestCase {
 	}
 	/** @test */
 	public function update_product_stock_after_updating_wishlist_quantity() {
-		$stock = $this->wishlist->type->stock - 2;
+		$stock = $this->wishlist->type->stock + ($this->wishlist->quantity - 2);
 		$this->assertInstanceOf(Wishlist::class, $this->wishlistInstance->renew($this->wishlist, ['quantity' => 2]));
 		$this->assertEquals(2, $this->wishlistInstance->stock($this->wishlist));
 		$this->assertEquals($stock , $this->wishlist->type->stock);
