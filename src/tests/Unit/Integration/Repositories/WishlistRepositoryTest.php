@@ -119,6 +119,15 @@ class WishlistRepositoryTest extends TestCase {
 		$this->assertEquals($stock , $this->wishlist->type->stock);
 	}
 	/** @test */
+	public function it_renew_the_cart_with_another_product_instead_of_the_current_cart_product()
+	{
+		$this->assertInstanceOf(Wishlist::class, $cart = $this->wishlistInstance->renew($this->wishlist, ['quantity' => 2 , 'product_variation_type_id' => 2 , 'product_id' => 2]));
+		$this->assertEquals(30, $this->wishlistInstance->stock($this->wishlist));
+		$this->assertEquals($cart->product_variation_type_id , 2);
+		$this->assertEquals($cart->product_id , 2);
+	       
+	}
+	/** @test */
 	public function it_pushes_the_wish_to_cart() {
 		$stock = $this->wishlistInstance->first()->quantity;
 		$typeStock = $this->wishlistInstance->first()->type->stock;
