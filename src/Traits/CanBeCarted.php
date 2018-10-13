@@ -17,8 +17,8 @@ trait CanBeCarted {
 	public function canBeAdded(int $id, int $quantity = 1) {
 		return ($this->typeRepo->stock($id) >= $quantity) && $quantity;
 	}
-	public function addOrCreate($product, int $quantity = 1) {
-		return $this->add($product, $quantity, true);
+	public function addOrCreate($type, int $quantity = 1) {
+		return $this->add($type, $quantity, true);
 	}
 	public function add($type, int $quantity = 1, $create = false) {
 		throw_unless($this->canBeAdded($type->id, $quantity), InsufficientProductQuantity::class);
@@ -102,8 +102,24 @@ trait CanBeCarted {
 		return $this->clearAll($user);
 	}
 	public function renew(CartInterface $cart, array $data) {
+		if (isset($data['product_variation_type_id'] , $data['product_id'])) {
+			$createdCart = $this->addOrCreate(
+				$this->typeRepo->findOrFail(
+					$data['product_variation_type_id']
+				),
+				$data['quantity'] ?? $cart->quantity
+			);
+			$this->remove($cart->id);
+			return $createdCart;
+		}
 		throw_unless($this->canBeAdded($cart->product_id, $data['quantity'] ?? $cart->quantity), InsufficientProductQuantity::class);
-		$this->typeRepo->decrementStock($cart->type, $data['quantity'] ?? 0);
+		if (isset($data['quantity']) && $cart->quantity > $data['quantity']) {
+			$this->typeRepo->incrementStock($cart->type, $cart->quantity - $data['quantity']);
+			
+		}
+		if (isset($data['quantity']) && $cart->quantity < $data['quantity']) {
+			$this->typeRepo->decrementStock($cart->type, $data['quantity'] - $cart->quantity);
+		}
 		$cart->update($data);
 		return $cart;
 	}
