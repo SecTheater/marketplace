@@ -11,4 +11,8 @@ class RoleRepository extends Repository {
     public function __construct(EloquentRole $model) {
         $this->model = $model;
     }
+    public function bySlug($slug)
+    {
+        return $this->model->where('slug', $slug)->firstOrFail();
+    }
 }

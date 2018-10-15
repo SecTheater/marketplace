@@ -49,17 +49,13 @@ class CreateMarketPlaceTable extends Migration
             $table->text('description');
             $table->integer('price');
             $table->integer('user_id')->unsigned();
-            // if (config('product.review')) {
-            $table->boolean('reviewed')->default(false);
             $table->date('reviewed_at')->nullable();
             $table->integer('reviewed_by')->unsigned()->nullable();
-            // }
             $table->timestamps();
         });
         Schema::table('products', function (Blueprint $table) {
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            // $table->foreign('product_category_id')->references('id')->on('categories')->onDelete('cascade');
-            if (config('product.review')) {
+            if (config('market.product.review')) {
                 $table->foreign('reviewed_by')->references('id')->on('users')->onDelete('cascade');
             }
         });

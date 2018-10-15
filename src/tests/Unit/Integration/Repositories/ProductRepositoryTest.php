@@ -136,4 +136,15 @@ class ProductRepositoryTest extends TestCase {
 		$type = $this->category->type;
 		$this->assertCount(0, $this->productInstance->fetchByVariations(['locations' => 'Egypt', 'variations' => ['size' => 'XL', 'color' => 'red'], 'categories' => $type]));
 	}
+	/** @test */
+	public function it_filters_by_custom_variations()
+	{
+		$this->productInstance->addCriterion('fetchNotReviewedOrExpired' , function($date = null){
+			return $this->productInstance->whereReviewedAt($date);
+		});
+		$this->productInstance->first()->fill(['reviewed_at' => null])->save();
+		$this->assertEquals(1,$this->productInstance->fetchByLocation('Egypt')->whereReviewedAt(null)->count());
+		$this->assertEquals(1,$this->productInstance->fetchByVariations(['fetchNotReviewedOrExpired' => []])->count());
+		$this->assertEquals(1,$this->productInstance->fetchByVariations(['locations' => 'Egypt','fetchNotReviewedOrExpired' => ['date' => null]])->count());
+	}
 }

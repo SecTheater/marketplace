@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Faker\Generator as Faker;
 
 /*
@@ -37,7 +38,7 @@ $factory->define(\SecTheater\Marketplace\Models\EloquentProduct::class, function
 		'price' => $faker->numberBetween(10, 100),
 		'name' => $faker->unique()->word,
 		'photo' => $faker->imageUrl(640, 480, 'fashion'),
-		'reviewed' => true,
+		'reviewed_at' => Carbon::now()->format('Y-m-d H:i:s'),
 	];
 });
 $factory->define(\SecTheater\Marketplace\Models\EloquentCart::class, function (Faker $faker) {

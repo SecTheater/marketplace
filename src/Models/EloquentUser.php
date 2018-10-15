@@ -18,7 +18,7 @@ class EloquentUser extends Eloquent implements UserInterface,
 	use Roles,Authenticatable, Authorizable, CanResetPassword;
 
     protected $table = 'users';
-
+    protected $casts = ['permissions' => 'array'];
 	public function wishlist() {
 		return $this->belongsToMany($this->wishlistModel, 'user_wishlist','user_id','wishlist_id');
 	}
@@ -26,7 +26,11 @@ class EloquentUser extends Eloquent implements UserInterface,
 		return $this->belongsToMany($this->cartModel, 'user_cart','user_id','cart_id');
 	}
 	public function products() {
-		return $this->hasMany($this->productModel, 'user_id', 'id')->where('products.reviewed', '=', true);
+        if (config('market.product.review')) {
+            return $this->hasMany($this->productModel, 'user_id', 'id')->where('products.reviewed_at', '!=', null);
+
+        }
+		return $this->hasMany($this->productModel, 'user_id', 'id');
 	}
 	public function coupons() {
 		return $this->belongsToMany($this->couponModel, 'user_coupon', 'user_id', 'coupon_id')->withPivot('purchased');

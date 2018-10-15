@@ -10,7 +10,6 @@ class ProductObserver {
 		if (auth()->user()->can('review-product',$product)) {
 			$product->reviewed_by = auth()->id();
 			$product->reviewed_at = date('Y-m-d H:i:s');
-			$product->reviewed = true;
 		}
 	}
 	public function updating(EloquentProduct $product) {
@@ -18,7 +17,6 @@ class ProductObserver {
 		if (auth()->user()->can('review-product',$product)) {
 			$product->reviewed_by = auth()->id();
 			$product->reviewed_at = date('Y-m-d H:i:s');
-			$product->reviewed = true;
 		}
 	}
 

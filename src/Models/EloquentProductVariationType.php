@@ -2,8 +2,10 @@
 
 namespace SecTheater\Marketplace\Models;
 
+use SecTheater\Marketplace\Repositories\Traits\HasSale;
+
 class EloquentProductVariationType extends Eloquent {
-	protected $guarded = ['id'];
+	use HasSale;
     protected $table = 'product_variation_types';
 
 	public function product() {

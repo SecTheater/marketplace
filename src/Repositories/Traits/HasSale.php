@@ -3,12 +3,11 @@ namespace SecTheater\Marketplace\Repositories\Traits;
 
 trait HasSale {
 	public function hasSales() {
-		return $this->sales->count();
+		return !! $this->getSalesCount();
 	}
-	public function getTotalSale() {
-		if ($this->hasSales()) {
-			return $this->sales()->whereActive(true)->sum('percentage');
-		}
-		return 0;
-	}
+    public function getSalesCount()
+    {
+        return $this->sales->count();
+    }
+    abstract public function getDiscount();
 }

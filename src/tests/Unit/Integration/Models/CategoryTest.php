@@ -32,7 +32,14 @@ class CategoryTest extends TestCase {
 		$this->assertCount(3, Category::first()->products);
 	}
 	/** @test */
-	public function it_has_a_sale() {
+	public function it_has_sales_on_a_category()
+	{
+		$category = new Category;
+	 	$this->assertFalse($category->hasSales());
+	}
+
+	/** @test */
+	public function it_has_a_sale_on_category() {
 		$category = factory(Category::class)->create();
 		$anotherCategory = factory(Category::class)->create();
 		$product = factory(Product::class)->create();
@@ -56,6 +63,8 @@ class CategoryTest extends TestCase {
 		);
 		$category->products()->attach($product);
 		$this->assertCount(2, $category->sales);
-		$this->assertEquals(21.0, $category->getTotalSale());
+		$this->assertTrue($category->hasSales());
+		$this->assertEquals(21.0, $category->getDiscount());
 	}
+
 }

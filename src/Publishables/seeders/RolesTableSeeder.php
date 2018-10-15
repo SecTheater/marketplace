@@ -11,6 +11,23 @@ class RolesTableSeeder extends Seeder
      */
     public function run()
     {
+        $user = EloquentRole::create([
+            'name'        => 'Normal User',
+            'slug'        => 'user',
+            'permissions' => [
+                'create-category'      => false,
+                'view-category'        => false,
+                'update-category'      => false,
+                'delete-category'      => false,
+                'upgrade-user'    => false,
+                'downgrade-user'  => false,
+                'review-product' => false,
+                'create-product' => false,
+                'edit-product' => false,
+                'delete-product' => false
+
+            ],
+        ]);
         $admin = EloquentRole::create([
             'slug'        => 'admin',
             'name'        => 'Administrator',
@@ -44,22 +61,6 @@ class RolesTableSeeder extends Seeder
 
             ],
         ]);
-        $user = EloquentRole::create([
-            'name'        => 'Normal User',
-            'slug'        => 'user',
-            'permissions' => [
-                'create-category'      => false,
-                'view-category'        => false,
-                'update-category'      => false,
-                'delete-category'      => false,
-                'upgrade-user'    => false,
-                'downgrade-user'  => false,
-                'review-product' => true,
-                'create-product' => false,
-                'edit-product' => false,
-                'delete-product' => false
-
-            ],
-        ]);
+        
     }
 }

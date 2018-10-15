@@ -13,7 +13,7 @@ class EloquentCategory extends Eloquent {
 		return $this->belongsToMany($this->productModel,'category_product','category_id','product_id');
 	}
 	public function sales() {
-		return $this->morphMany($this->saleModel, 'saleable','saleable_type');
+		return $this->morphMany($this->saleModel, 'saleable','saleable_type')->whereActive(true);
 	}
 
 	public function scopeParents(Builder $builder) {

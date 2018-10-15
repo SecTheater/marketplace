@@ -17,8 +17,8 @@ trait CanBeCarted {
 	public function canBeAdded(int $id, int $quantity = 1) {
 		return ($this->typeRepo->stock($id) >= $quantity) && $quantity;
 	}
-	public function addOrCreate($product, int $quantity = 1) {
-		return $this->add($product, $quantity, true);
+	public function addOrCreate($type, int $quantity = 1) {
+		return $this->add($type, $quantity, true);
 	}
 	public function add($type, int $quantity = 1, $create = false) {
 		throw_unless($this->canBeAdded($type->id, $quantity), InsufficientProductQuantity::class);
@@ -29,10 +29,9 @@ trait CanBeCarted {
 			$attributes = ['product_id' => $type->product_id, 'quantity' => $quantity, 'product_variation_type_id' => $type->id];
 			return $this->create($attributes);
 		}
-		$cart = auth()->user()->{$this->getModelName}()->whereProductId($type->product_id);
-		throw_unless($cart->first(), ProductDoesNotExist::class);
+		$cart = auth()->user()->{$this->getModelName}()->where(['product_id' => $type->product_id , 'product_variation_type_id' => $type->id ])->firstOrFail();
 		$cart->increment('quantity', $quantity);
-		return auth()->user()->{$this->getModelName}()->whereProductId($type->product_id)->first();
+		return $cart;
 	}
 	public function remove($id) {
 		$cart = $this->item($id);
@@ -67,7 +66,17 @@ trait CanBeCarted {
 	public function items() {
 		return auth()->user()->{$this->getModelName};
 	}
-	public function item($id, $attributes = null) {
+	public function item(int $id = null, array $attributes = null , $connector = 'or') {
+		if (!$id && !$attributes) {
+			return $this->items();
+		}
+		if (!$id && $attributes) {
+			return auth()->user()->{$this->getModelName}()->whereHas('product.variations', function($query) use($attributes , $connector){
+				array_walk($attributes, function($value,$key) use($query , $connector){
+					$query->where('details->' . $key , '=', $value , $connector);
+				});
+			})->get();
+		}
 		$cart = auth()->user()->{$this->getModelName}()->findOrFail($id);
 		if ($attributes) {
 			throw_unless($this->variationRepo->contains($cart->product_variation_type_id, $attributes), ProductAttributesDoesNotMatchException::class);
@@ -93,8 +102,24 @@ trait CanBeCarted {
 		return $this->clearAll($user);
 	}
 	public function renew(CartInterface $cart, array $data) {
+		if (isset($data['product_variation_type_id'] , $data['product_id'])) {
+			$createdCart = $this->addOrCreate(
+				$this->typeRepo->findOrFail(
+					$data['product_variation_type_id']
+				),
+				$data['quantity'] ?? $cart->quantity
+			);
+			$this->remove($cart->id);
+			return $createdCart;
+		}
 		throw_unless($this->canBeAdded($cart->product_id, $data['quantity'] ?? $cart->quantity), InsufficientProductQuantity::class);
-		$this->typeRepo->decrementStock($cart->type, $data['quantity'] ?? 0);
+		if (isset($data['quantity']) && $cart->quantity > $data['quantity']) {
+			$this->typeRepo->incrementStock($cart->type, $cart->quantity - $data['quantity']);
+			
+		}
+		if (isset($data['quantity']) && $cart->quantity < $data['quantity']) {
+			$this->typeRepo->decrementStock($cart->type, $data['quantity'] - $cart->quantity);
+		}
 		$cart->update($data);
 		return $cart;
 	}
@@ -103,7 +128,7 @@ trait CanBeCarted {
 		if (!$cart instanceof $base) {
 			$cart = $this->findOrFail($cart);
 		}
-		return $cart->type->stock;
+		return $cart->quantity;
 	}
 
 	public function __set($key, $value) {

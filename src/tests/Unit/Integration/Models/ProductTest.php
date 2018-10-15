@@ -71,7 +71,7 @@ class ProductTest extends TestCase {
 			])
 		);
 		$this->assertCount(2, $product->sales);
-		$this->assertEquals(21.0, $product->getTotalSale());
+		$this->assertEquals(21.0, $product->fresh()->getDiscount());
 	}
 	/** @test */
 	public function it_has_sale_on_category() {

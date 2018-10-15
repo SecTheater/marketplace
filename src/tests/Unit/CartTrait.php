@@ -18,6 +18,7 @@ trait CartTrait {
 		auth()->user()->cart()->saveMany(factory(Product::class, 3)->create()->each(function ($product) {
 			$type = factory(ProductVariationType::class)->create([
 				'product_id' => $product->id,
+				'stock' => 50
 			]);
 
 			factory(ProductVariation::class)->create([
@@ -31,6 +32,7 @@ trait CartTrait {
 			$product->wishlists()->save(factory(Wishlist::class)->create([
 				'product_id' => $product->id,
 				'product_variation_type_id' => $type->id,
+				'quantity' => 30
 			]));
 		}));
 		auth()->user()->wishlist()->saveMany(Product::get());
