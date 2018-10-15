@@ -33,7 +33,7 @@ class UserTest extends TestCase {
   public function it_has_cart_with_many_to_many_relationship()
   {
     $this->assertInstanceOf(BelongsToMany::class,$this->user->cart());
-    $this->assertEquals('user_cart',$this->user->cart()->getTable());
+    $this->assertEquals('cart_user',$this->user->cart()->getTable());
 
     $this->assertEquals('user_id',$this->user->cart()->getForeignPivotKeyName());
 
@@ -64,7 +64,7 @@ class UserTest extends TestCase {
   public function it_has_roles_with_many_to_many_relationship()
   {
     $this->assertInstanceOf(BelongsToMany::class,$this->user->roles());
-    $this->assertEquals('role_users',$this->user->roles()->getTable());
+    $this->assertEquals('role_user',$this->user->roles()->getTable());
     $this->assertEquals('user_id',$this->user->roles()->getForeignPivotKeyName());
     $this->assertEquals('role_id',$this->user->roles()->getRelatedPivotKeyName());
   }

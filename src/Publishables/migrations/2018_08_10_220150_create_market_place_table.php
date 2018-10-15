@@ -33,12 +33,12 @@ class CreateMarketPlaceTable extends Migration
             $table->text('permissions');
             $table->timestamps();
         });
-        Schema::create('role_users', function (Blueprint $table) {
+        Schema::create('role_user', function (Blueprint $table) {
             $table->integer('user_id')->unsigned();
             $table->integer('role_id')->unsigned();
             $table->primary(['user_id', 'role_id']);
         });
-        Schema::table('role_users', function (Blueprint $table) {
+        Schema::table('role_user', function (Blueprint $table) {
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
         });
@@ -49,12 +49,15 @@ class CreateMarketPlaceTable extends Migration
             $table->text('description');
             $table->integer('price');
             $table->integer('user_id')->unsigned();
+            // if (config('product.review')) {
             $table->date('reviewed_at')->nullable();
             $table->integer('reviewed_by')->unsigned()->nullable();
+            // }
             $table->timestamps();
         });
         Schema::table('products', function (Blueprint $table) {
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            // $table->foreign('product_category_id')->references('id')->on('categories')->onDelete('cascade');
             if (config('market.product.review')) {
                 $table->foreign('reviewed_by')->references('id')->on('users')->onDelete('cascade');
             }
@@ -92,17 +95,6 @@ class CreateMarketPlaceTable extends Migration
 
             $table->foreign('product_id')->references('id')->on('products');
         });
-                Schema::create('category_attribute_values', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('product_id')->unsigned();
-            $table->integer('product_category_id')->unsigned();
-            $table->text('values');
-            $table->timestamps();
-        });
-        Schema::table('category_attribute_values', function (Blueprint $table){
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->foreign('product_category_id')->references('id')->on('categories')->onDelete('cascade');
-        });
 
         Schema::create('carts', function (Blueprint $table) {
             $table->increments('id');
@@ -115,7 +107,7 @@ class CreateMarketPlaceTable extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('product_variation_type_id')->references('id')->on('product_variation_types')->onDelete('cascade');
         });
-        Schema::create('user_cart', function (Blueprint $table) {
+        Schema::create('cart_user', function (Blueprint $table) {
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->integer('cart_id')->unsigned();
@@ -141,11 +133,7 @@ class CreateMarketPlaceTable extends Migration
 
         });
 
-
-
-
-
-                Schema::create('coupons', function (Blueprint $table) {
+        Schema::create('coupons', function (Blueprint $table) {
             $table->increments('id');
             $table->string('code', 32);
             $table->integer('user_id')->unsigned();
@@ -169,7 +157,7 @@ class CreateMarketPlaceTable extends Migration
             $table->foreign('coupon_id')->references('id')->on('coupons')->onDelete('cascade');
         });
 
-                Schema::create('sales', function (Blueprint $table) {
+        Schema::create('sales', function (Blueprint $table) {
             $table->increments('id');
             $table->float('percentage');
             $table->integer('saleable_id')->unsigned();
@@ -184,12 +172,12 @@ class CreateMarketPlaceTable extends Migration
 
     public function down()
     {
-        Schema::table('role_users', function (Blueprint $table) {
+        Schema::table('role_user', function (Blueprint $table) {
             $table->dropForeign(['role_id']);
             $table->dropForeign(['user_id']);
         });
         Schema::dropIfExists('roles');
-        Schema::dropIfExists('role_users');
+        Schema::dropIfExists('role_user');
         Schema::dropIfExists('users');
         Schema::table('products', function (Blueprint $table) {
             $table->dropForeign(['user_id']);
@@ -209,12 +197,12 @@ class CreateMarketPlaceTable extends Migration
         Schema::table('carts', function (Blueprint $table) {
             $table->dropForeign(['product_id']);
         });
-        Schema::table('user_cart', function (Blueprint $table) {
+        Schema::table('cart_user', function (Blueprint $table) {
             $table->dropForeign(['user_id']);
             $table->dropForeign(['cart_id']);
         });
         Schema::dropIfExists('carts');
-        Schema::dropIfExists('user_cart');
+        Schema::dropIfExists('cart_user');
 
         Schema::table('wishlists', function (Blueprint $table) {
             $table->dropForeign(['product_id']);
@@ -238,12 +226,6 @@ class CreateMarketPlaceTable extends Migration
         });
         Schema::dropIfExists('user_coupon');
         Schema::dropIfExists('coupons');
-        Schema::table('category_attribute_values', function (Blueprint $table){
-            $table->dropForeign(['product_id']);
-            $table->dropForeign(['product_category_id']);
-        });
-
-        Schema::dropIfExists('category_attribute_values');
         Schema::dropIfExists('sales');
 
 

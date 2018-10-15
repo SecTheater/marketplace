@@ -23,7 +23,7 @@ class EloquentUser extends Eloquent implements UserInterface,
 		return $this->belongsToMany($this->wishlistModel, 'user_wishlist','user_id','wishlist_id');
 	}
 	public function cart() {
-		return $this->belongsToMany($this->cartModel, 'user_cart','user_id','cart_id');
+		return $this->belongsToMany($this->cartModel, 'cart_user','user_id','cart_id');
 	}
 	public function products() {
         if (config('market.product.review')) {
@@ -37,6 +37,6 @@ class EloquentUser extends Eloquent implements UserInterface,
 	}
 	public function roles()
 	{
-        return $this->belongsToMany($this->roleModel, 'role_users', 'user_id', 'role_id');
+        return $this->belongsToMany($this->roleModel, 'role_user', 'user_id', 'role_id');
 	}
 }
