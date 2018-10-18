@@ -59,7 +59,8 @@ trait CanBeCarted {
 		}
 
 		if (config('market.cart.tax.enabled') && is_int(config('market.cart.tax.percentage')) && class_basename($this->model) == 'Cart') {
-			return $this->subtotal * (config('market.cart.tax.percentage')) / 100;
+			$this->subtotal -= $this->subtotal * (config('market.cart.tax.percentage')) / 100;
+		    	return $this->subtotal;
 		}
 		return $this->subtotal;
 	}
