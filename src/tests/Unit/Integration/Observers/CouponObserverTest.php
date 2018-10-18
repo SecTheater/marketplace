@@ -18,13 +18,18 @@ class CouponObserverTest extends TestCase {
         ]);
         \Event::assertDispatched('eloquent.creating: SecTheater\Marketplace\Models\EloquentCoupon');
     }
+    /** @test **/
     public function it_fires_updating_event_on_updating_a_product()
     {
         \Event::fake();
-        $coupon = factory(EloquentCoupon::class)->create();
+        $user = factory(EloquentUser::class)->create();
+        $this->actingAs($user);
+        $coupon = factory(EloquentCoupon::class)->create([
+            'user_id' => auth()->id()
+        ]);
         $coupon->update([
             'expires_at' => null
         ]);
-        \Event::assertDispatched('eloquent.creating: SecTheater\Marketplace\Models\EloquentCoupon');
+        \Event::assertDispatched('eloquent.updating: SecTheater\Marketplace\Models\EloquentCoupon');
     }
 }

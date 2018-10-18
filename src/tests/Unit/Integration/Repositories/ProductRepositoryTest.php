@@ -69,26 +69,6 @@ class ProductRepositoryTest extends TestCase {
 	public function it_retrieves_by_prices_between_min_and_max() {
 		$this->assertInstanceOf(Collection::class, $this->productInstance->betweenPrice(30, 100)->get());
 	}
-	public function it_can_fetch_by_filters() {
-		$this->productInstance->generate([
-			'user_id' => auth()->id(),
-			'name' => 'laptop',
-			'description' => 'Fancy laptop',
-			'price' => 15000,
-			'category' => 'electronics',
-			'type' => ['name' => 'MacBook Pro', 'stock' => 20],
-			'details' => ['color' => 'Red', 'size' => 'XXL', 'brand' => 'lacoste'],
-		]);
-		$this->productInstance->generate([
-			'user_id' => auth()->id(),
-			'name' => 'laptop',
-			'description' => 'Fancy laptop',
-			'price' => 15000,
-			'category' => 'electronics',
-			'type' => ['name' => 'MacBook Pro', 'stock' => 20],
-			'details' => ['color' => 'Red', 'size' => 'XXL', 'brand' => 'lacoste'],
-		]);
-	}
 	/** @test */
 	public function it_fetches_products_by_date_time() {
 		$from = $this->productInstance->first()->created_at->toDateTimeString();

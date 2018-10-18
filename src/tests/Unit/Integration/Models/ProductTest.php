@@ -28,18 +28,6 @@ class ProductTest extends TestCase {
 		$this->assertInstanceOf(User::class, $product->owner);
 		$this->assertEquals(auth()->id(), $product->owner->id);
 	}
-	// /** @test */
-	public function it_has_many_coupons() {
-		$product = factory(Product::class)->create([
-			'user_id' => auth()->id(),
-		]);
-		$coupons = factory(Coupon::class, 2)->create([
-			'user_id' => auth()->id(),
-			'product_id' => $product->id,
-		]);
-		$product->coupons()->saveMany($coupons);
-		$this->assertCount(2, $product->coupons);
-	}
 	/** @test */
 	public function it_has_many_variations() {
 		$product = factory(Product::class)->create();

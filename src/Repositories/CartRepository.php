@@ -8,7 +8,6 @@ use SecTheater\Marketplace\Traits\CanBeCarted;
 class CartRepository extends Repository implements CartInterface {
 	use CanBeCarted;
 	protected $model, $typeRepo, $variationRepo;
-	protected $tax = false;
 	public function __construct(EloquentCart $model) {
 		$this->model = $model;
 		$this->typeRepo = app('ProductVariationTypeRepository');

@@ -49,9 +49,11 @@ class WishlistRepositoryTest extends TestCase {
 	/** @test */
 	public function it_removes_from_wishlist() {
 		$this->assertTrue($this->wishlistInstance->remove(auth()->user()->wishlist->first()->id));
-		// product doesn't exist
-		$this->expectException(ModelNotFoundException::class);
-		$this->wishlistInstance->remove(10);
+		try {
+			$returned = $this->wishlistInstance->remove(10);
+		} catch (ModelNotFoundException $e) {
+			$this->assertEquals(2 , $this->wishlistInstance->count());
+		}
 	}
 	/** @test */
 	public function it_check_stock_equals_after_removal() {
