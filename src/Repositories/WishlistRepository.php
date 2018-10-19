@@ -21,13 +21,13 @@ class WishlistRepository extends Repository implements CartInterface {
 		}
 		$user = $user ?? auth()->user();
 		$user->wishlist()->detach($wish);
-        	try {
-            		$this->getModelName = 'cart';
-            		return $this->add($wish->type, $wish->quantity, true);
-        	} catch (InsufficientProductQuantity $e) {
-            		$user->wishlist()->attach($wish);
-            		throw new InsufficientProductQuantity;
-        	}
+    	try {
+    		$this->getModelName = 'cart';
+    		return $this->add($wish->type, $wish->quantity, true);
+    	} catch (InsufficientProductQuantity $e) {
+    		$user->wishlist()->attach($wish);
+    		throw new InsufficientProductQuantity;
+    	}
 	}
 
 }

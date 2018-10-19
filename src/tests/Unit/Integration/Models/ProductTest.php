@@ -2,6 +2,7 @@
 
 namespace SecTheater\Marketplace\Tests\Unit\Integration\Models;
 
+use Carbon\Carbon;
 use SecTheater\Marketplace\Models\EloquentCategory as Category;
 use SecTheater\Marketplace\Models\EloquentCoupon as Coupon;
 use SecTheater\Marketplace\Models\EloquentProduct as Product;
@@ -58,7 +59,15 @@ class ProductTest extends TestCase {
 				'saleable_type' => Product::class,
 			])
 		);
-		$this->assertCount(2, $product->sales);
+		$product->sales()->save(
+			$this->createSale([
+				'saleable_id' => $product->id,
+				'saleable_type' => Product::class,
+				'expires_at' => Carbon::now()->subDays(5)->format('Y-m-d H:i:s')
+			])
+		);
+
+		$this->assertCount(3, $product->sales);
 		$this->assertEquals(21.0, $product->fresh()->getDiscount());
 	}
 	/** @test */

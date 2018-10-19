@@ -11,16 +11,18 @@ class EloquentProductVariationType extends Eloquent {
 	public function product() {
 		return $this->belongsTo($this->productModel);
 	}
-	public function sales() {
-		return $this->morphMany($this->saleModel, 'saleable');
-	}
-
 	public function variations() {
 		return $this->hasMany($this->productVariationModel,'product_variation_type_id');
 	}
 	public function getDiscount()
 	{
-		return $this->sales->reduce(function($carry  , $sale){
+		return $this->sales->filter(function($sale){
+			if ($sale->expires_at) {
+				return $sale->expires_at > Carbon::now()->format('Y-m-d H:i:s');
+				
+			}
+			return true;
+		})->reduce(function($carry  , $sale){
 			return $carry + $sale->percentage;
 		});
 	}

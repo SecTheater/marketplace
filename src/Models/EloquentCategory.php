@@ -12,9 +12,6 @@ class EloquentCategory extends Eloquent {
 	public function products() {
 		return $this->belongsToMany($this->productModel,'category_product','category_id','product_id');
 	}
-	public function sales() {
-		return $this->morphMany($this->saleModel, 'saleable','saleable_type')->whereActive(true);
-	}
 
 	public function scopeParents(Builder $builder) {
 		return $builder->whereNull('parent_id');
@@ -24,7 +21,16 @@ class EloquentCategory extends Eloquent {
 	}
 	public function getDiscount()
 	{
-		return $this->sales->reduce(function ($carry , $sale){
+		return $this->sales->filter(function($sale){
+			if ($sale->expires_at) {
+				if ($sale->expires_at <= Carbon::now()->format('Y-m-d H:i:s')) {
+					$sale->delete();
+					return false;	
+				}
+				
+			}
+			return true;
+		})->reduce(function($carry  , $sale){
 			return $carry + $sale->percentage;
 		});
 	}

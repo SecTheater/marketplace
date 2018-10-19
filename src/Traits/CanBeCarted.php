@@ -60,7 +60,6 @@ trait CanBeCarted {
 
 		if (config('market.cart.tax.enabled') && is_int(config('market.cart.tax.percentage')) && class_basename($this->model) == 'Cart') {
 			$this->subtotal -= $this->subtotal * (config('market.cart.tax.percentage')) / 100;
-		    	return $this->subtotal;
 		}
 		return $this->subtotal;
 	}
@@ -80,7 +79,7 @@ trait CanBeCarted {
 		}
 		$cart = auth()->user()->{$this->getModelName}()->findOrFail($id);
 		if ($attributes) {
-			throw_unless($this->variationRepo->contains($cart->product_variation_type_id, $attributes), ProductAttributesDoesNotMatchException::class);
+			throw_unless($this->variationRepo->contains($cart->product_variation_type_id, $attributes), ProductAttributesDoesNotMatchException::class,'There is no product with the specified specifications.');
 		}
 		return $cart;
 	}

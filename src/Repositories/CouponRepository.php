@@ -20,7 +20,7 @@ class CouponRepository extends Repository {
 		return $this->model->create($data);
 	}
 	public function validate(Coupon $coupon) {
-		throw_if($coupon->expires_at && $coupon->expires_at < Carbon::now()->format('Y-m-d H:i:s'), CouponExpiredException::class);
+		throw_if($coupon->expires_at && $coupon->expires_at < Carbon::now()->format('Y-m-d H:i:s'), CouponExpiredException::class, 'Coupon is already expired.');
 		return $coupon->active && $coupon->amount;
 	}
 	public function deactivate($id) {
@@ -29,10 +29,21 @@ class CouponRepository extends Repository {
 	public function activate($id) {
 		return !!$this->model->findOrFail($id)->update(['active' => true]);
 	}
-	public function regenerate($id, $code = null, bool $check = false) {
+	public function regenerate($id, $code = null, bool $check = false , int $numberOfWeeks = 1) {
 		$coupon = $this->model->findOrFail($id);
 		if ($check) {
-			$this->validate($coupon);
+			try {
+				if (!$this->validate($coupon)) {
+					$coupon->update([
+						'active' => true,
+						'amount' => $coupon->amount ? $coupon->amount : 1
+					]);
+				}
+			} catch (CouponExpiredException $e) {
+				$coupon->update([
+					'expires_at' => Carbon::now()->addWeeks($numberOfWeeks)->format('Y-m-d H:i:s')
+				]);
+			}
 		}
 		$coupon->update(['code' => $code ?? str_random(32)]);
 		return $coupon;
@@ -42,10 +53,10 @@ class CouponRepository extends Repository {
 	}
 	public function purchase(Coupon $coupon, UserInterface $user = null) {
 		$user = $user ?? auth()->user();
-		throw_unless($this->validate($coupon), CouponExpiredException::class);
+		throw_unless($this->validate($coupon), CouponExpiredException::class , 'Coupon is already expired.');
 		throw_if($user->id == $coupon->owner->id || $coupon->whereHas('users', function ($query) use ($user) {
 			$query->whereUserId($user->id);
-		})->count(), CouponCanNotBePurchasedException::class);
+		})->count(), CouponCanNotBePurchasedException::class , 'Coupon cannot be purchased.');
 		$coupon->decrement('amount');
 		$coupon->users()->attach($user);
 		return $coupon;
@@ -69,8 +80,9 @@ class CouponRepository extends Repository {
 	}
 	public function appliedCoupons($coupons) {
 		/**
-		 * if the coupons aren't collection, they aren't object yet,so we will pass the coupons to the find   * method, which will retrieve either a model instance or collection of models depending on the passed argument.
-		 */
+		* if the coupons aren't collection, they aren't object yet,so we will pass the coupons to the find   
+		* method, which will retrieve either a model instance or collection of models depending on the passed argument.
+		*/
 		if (!is_object($coupons) && (is_int($coupons) || is_array($coupons))) {
 			$coupons = $this->find($coupons);
 		}

@@ -30,11 +30,17 @@ class WishlistRepositoryTest extends TestCase {
 		$this->assertInstanceOf(Collection::class, $this->wishlistInstance->item($this->wishlist->id, ['color' => 'blue', 'size' => 'L'])->product->variations);
 		$this->assertInstanceOf(Collection::class, $this->wishlistInstance->item());
 		$this->assertInstanceOf(Collection::class, $this->wishlistInstance->item(null , ['color' => 'blue', 'size' => 'L']));
-		$this->expectException(ProductAttributesDoesNotMatchException::class);
-		$this->wishlistInstance->item($this->wishlist->id, ['color' => 'random-color']);
-
-		$this->expectException(ModelNotFoundException::class);
-		$this->wishlistInstance->item(10);
+		try {
+			$this->assertInstanceOf(Wishlist::class,$this->wishlistInstance->item($this->wishlist->id, ['color' => 'random-color']));
+		} catch (ProductAttributesDoesNotMatchException $e) {
+			$this->assertEquals('There is no product with the specified specifications.', $e->getMessage());
+		}
+		
+		try {
+			$this->assertInstanceOf(Wishlist::class,$this->wishlistInstance->item(10));
+		} catch (ModelNotFoundException $e) {
+			$this->assertEquals(Wishlist::class, $e->getModel());
+		}
 	}
 	/** @test */
 	public function it_can_add_product_to_user() {
@@ -43,8 +49,12 @@ class WishlistRepositoryTest extends TestCase {
 		$this->assertEquals($stock, $this->product->types->first()->stock);
 		$this->wishlistInstance->remove($this->wishlist->id);
 		$this->assertInstanceOf(Wishlist::class, $this->wishlistInstance->add($this->product->types->first(), 3, true));
-		$this->expectException(InsufficientProductQuantity::class);
-		$this->wishlistInstance->add($this->product->types->first(), 1000);
+		try {
+			$this->assertInstanceOf(Wishlist::class,$this->wishlistInstance->add($this->product->types->first(), 1000));
+			
+		} catch (InsufficientProductQuantity $e) {
+			$this->assertEquals(83 , $this->product->fresh()->types->first()->stock);
+		}
 	}
 	/** @test */
 	public function it_removes_from_wishlist() {
@@ -110,8 +120,12 @@ class WishlistRepositoryTest extends TestCase {
 		$this->assertInstanceOf(Wishlist::class, $this->wishlistInstance->renew($this->wishlist, ['quantity' => 2]));
 		$this->assertEquals(2, $this->wishlistInstance->first()->quantity);
 		$this->assertInstanceOf(Wishlist::class, $this->wishlistInstance->renew($this->wishlist, ['created_at' => date('Y-m-d H:i:s')]));
-		$this->expectException(InsufficientProductQuantity::class);
-		$this->wishlistInstance->renew($this->wishlist, ['quantity' => 100]);
+		$stock = $this->wishlist->fresh()->stock;
+		try {
+			$this->wishlistInstance->renew($this->wishlist, ['quantity' => 100]);
+		} catch (InsufficientProductQuantity $e) {
+			$this->assertEquals($stock , $this->wishlist->fresh()->stock);
+		}
 	}
 	/** @test */
 	public function update_product_stock_after_updating_wishlist_quantity() {

@@ -57,8 +57,12 @@ class ProductVariationTypeRepositoryTest extends TestCase {
 		$this->assertEquals(29, $this->typeRepo->decrementStock($this->type->id)->stock);
 		$this->assertEquals(19, $this->typeRepo->decrementStock($this->type->id, 10)->stock);
 		$this->assertEquals(0, $this->typeRepo->decrementStock($this->type->id, 19)->stock);
-		$this->expectException(InsufficientProductQuantity::class);
-		$this->typeRepo->decrementStock($this->type->id, 1);
+		$this->typeRepo->incrementStock($this->type->id);
+		try {
+			$this->typeRepo->decrementStock($this->type->id, 10);
+		} catch (InsufficientProductQuantity $e) {
+			$this->assertEquals(1,$this->type->fresh()->stock);
+		}
 	}
 
 }

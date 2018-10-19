@@ -8,7 +8,7 @@ use SecTheater\Marketplace\Exceptions\CouponCanNotBePurchasedException;
 use SecTheater\Marketplace\Exceptions\CouponExpiredException;
 use SecTheater\Marketplace\Models\EloquentUser as User;
 use SecTheater\Marketplace\Tests\TestCase;
-
+use SecTheater\Marketplace\Models\EloquentCoupon as Coupon;
 class CouponRepositoryTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
@@ -50,9 +50,12 @@ class CouponRepositoryTest extends TestCase {
 			'active' => false,
 		]);
 		$this->assertFalse($this->couponRepo->validate($coupon));
-
-		$this->expectException(CouponExpiredException::class);
-		$this->couponRepo->validate($anotherCoupon);
+		try {
+			$this->couponRepo->validate($anotherCoupon);
+			
+		} catch (CouponExpiredException $e) {
+			$this->assertEquals("Coupon is already expired.",$e->getMessage());			
+		}
 	}
 	/** @test */
 	public function it_has_percentage() {
@@ -72,8 +75,11 @@ class CouponRepositoryTest extends TestCase {
 
 		]);
 		$this->assertTrue($this->couponRepo->deactivate($coupon->id));
-		$this->expectException(ModelNotFoundException::class);
-		$this->assertTrue($this->couponRepo->deactivate(10));
+		try {
+			$this->assertTrue($this->couponRepo->deactivate(10));
+		} catch (ModelNotFoundException $e) {
+			$this->assertEquals(10,$e->getIds()[0]);			
+		}
 	}
 	/** @test */
 	public function it_activates_a_coupon() {
@@ -96,8 +102,11 @@ class CouponRepositoryTest extends TestCase {
 		$code = $coupon->code;
 		$this->assertNotEquals($this->couponRepo->regenerate($coupon->id)->code, $code);
 		$this->assertEquals($this->couponRepo->regenerate($coupon->id, 'some-random-string')->code, 'some-random-string');
-		$this->expectException(ModelNotFoundException::class);
-		$this->couponRepo->regenerate(15);
+		try {
+			$this->assertTrue($this->couponRepo->regenerate(15));
+		} catch (ModelNotFoundException $e) {
+			$this->assertEquals(15,$e->getIds()[0]);			
+		}
 	}
 	/** @test */
 	public function it_validates_and_regenerates_coupon() {
@@ -107,8 +116,21 @@ class CouponRepositoryTest extends TestCase {
 			'code' => str_random(32)
 
 		]);
-		$this->expectException(CouponExpiredException::class);
-		$this->couponRepo->regenerateAndValidate($coupon->id);
+		$this->assertInstanceOf(Coupon::class,$this->couponRepo->regenerateAndValidate($coupon->id));
+		$coupon->update([
+			'active' => false,
+			'amount' => 0
+		]);
+		$this->assertInstanceOf(Coupon::class,$this->couponRepo->regenerateAndValidate($coupon->id));
+		$this->assertEquals(['active' => true , 'amount' => 1 ],['active' => $coupon->fresh()->active , 'amount' => $coupon->fresh()->amount]);
+		$coupon->fresh()->update([
+			'active' => false,
+			'amount' => 0,
+			'expires_at' => Carbon::now()->subDays(7)->format('Y-m-d H:i:s'),
+		]);
+		$this->assertInstanceOf(Coupon::class,$this->couponRepo->regenerateAndValidate($coupon->id));
+		$this->assertEquals(['active' => false , 'amount' => 0 ],['active' => $coupon->fresh()->active , 'amount' => $coupon->fresh()->amount]);
+
 	}
 	/** @test */
 	public function it_can_purchase_to_a_coupon() {
@@ -127,8 +149,11 @@ class CouponRepositoryTest extends TestCase {
 			'active' => true,
 			'code' => str_random(32)
 		]);
-		$this->expectException(CouponCanNotBePurchasedException::class);
-		$this->couponRepo->purchase($coupon);
+		try {
+			$this->couponRepo->purchase($coupon);
+		} catch (CouponCanNotBePurchasedException $e) {
+			$this->assertEquals(10 , $coupon->fresh()->amount);			
+		}
 
 	}
 	/** @test */
@@ -141,8 +166,11 @@ class CouponRepositoryTest extends TestCase {
 			'code' => str_random(32)
 		]);
 		$this->couponRepo->purchase($coupon);
-		$this->expectException(CouponCanNotBePurchasedException::class);
-		$this->couponRepo->purchase($coupon);
+		try {
+			$this->couponRepo->purchase($coupon);
+		} catch (CouponCanNotBePurchasedException $e) {
+			$this->assertEquals(9 , $coupon->fresh()->amount);			
+		}
 	}
 	/** @test */
 	public function it_can_release_only_purchased_coupons() {

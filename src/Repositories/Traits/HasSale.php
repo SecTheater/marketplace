@@ -2,7 +2,11 @@
 namespace SecTheater\Marketplace\Repositories\Traits;
 
 trait HasSale {
-	public function hasSales() {
+	public function sales() {
+        return $this->morphMany($this->saleModel, 'saleable','saleable_type')->whereActive(true);
+    }
+
+    public function hasSales() {
 		return !! $this->getSalesCount();
 	}
     public function getSalesCount()
