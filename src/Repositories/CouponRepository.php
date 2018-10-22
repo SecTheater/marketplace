@@ -48,8 +48,8 @@ class CouponRepository extends Repository {
 		$coupon->update(['code' => $code ?? str_random(32)]);
 		return $coupon;
 	}
-	public function regenerateAndValidate($id, $code = null) {
-		return $this->regenerate($id, $code, true);
+	public function regenerateAndValidate($id, $code = null , int $numberOfWeeks = 1) {
+		return $this->regenerate($id, $code, true,$numberOfWeeks);
 	}
 	public function purchase(Coupon $coupon, UserInterface $user = null) {
 		$user = $user ?? auth()->user();

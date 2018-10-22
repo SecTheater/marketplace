@@ -18,7 +18,10 @@ class EloquentProductVariationType extends Eloquent {
 	{
 		return $this->sales->filter(function($sale){
 			if ($sale->expires_at) {
-				return $sale->expires_at > Carbon::now()->format('Y-m-d H:i:s');
+				if ($sale->expires_at <= Carbon::now()->format('Y-m-d H:i:s')) {
+					$sale->delete();
+					return false;	
+				}
 				
 			}
 			return true;
