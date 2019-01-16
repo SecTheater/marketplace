@@ -1,6 +1,6 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/sectheater/marketplace.svg?style=flat-square)](https://packagist.org/packages/sectheater/marketplace)
-
+[![MadeWithLaravel.com shield](https://madewithlaravel.com/storage/repo-shields/1161-shield.svg)](https://madewithlaravel.com/p/marketplace/shield-link)
 <!-- [![Total Downloads](https://img.shields.io/packagist/dt/sectheater/laravel-jarvis.svg?style=flat-square)](https://packagist.org/packages/sectheater/marketplace) -->
 
 > the marketplace CheatSheet will be availble soon 
